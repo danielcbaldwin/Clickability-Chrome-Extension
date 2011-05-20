@@ -1,0 +1,93 @@
+<style>
+	ul {
+		width: 120px;
+		padding: 0;
+		margin: 0;
+	}
+	
+	ul li {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	
+	ul li a {
+		padding: 3px 7px 3px 32px;
+		text-decoration: none;
+		color: #000;
+		display: block;
+		border-radius: 3px;
+		-webkit-border-radius: 3px;
+		font-size: 11px;
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		line-height: 16px;
+	}
+	
+	ul li a.jira {
+		background: url(images/ticket.png) no-repeat 7px center;
+	}
+	
+	ul li a.debug {
+		background: url(images/bug.png) no-repeat 7px center;
+	}
+	
+	ul li a.cache {
+		background: url(images/cache.png) no-repeat 7px center;
+	}
+	
+	ul li a.login {
+		background: url(images/key.png) no-repeat 7px center;
+	}
+	
+	ul li a.community {
+		background: url(images/group.png) no-repeat 7px center;
+	}
+	
+	ul li a:hover {
+		background-color: #ccc;
+	}
+	
+	.divider {
+		border: 0;
+		color: #9E9E9E;
+		background-color: #9E9E9E;
+		height: 1px;
+		width: 100%;
+		text-align: left;
+	}
+</style>
+
+<script>
+	function login() {
+		chrome.tabs.executeScript(null, { code: "window.location = 'https://cms.clickability.com/cms'" });
+		window.close();
+	}
+	
+	function jira() {
+		chrome.tabs.executeScript(null, { code: "window.location = 'http://clickability.onjira.com'" });
+		window.close();
+	}
+	
+	function cacheBust() {
+		chrome.tabs.executeScript(null, { file: "scripts/cache-bust.js" });
+	}
+	
+	function debug() {
+		chrome.tabs.executeScript(null, { file: "scripts/debug.js" });
+	}
+	
+	function community() {
+		chrome.tabs.executeScript(null, { code: "window.location = 'https://community.clickability.com'" });
+		window.close();
+	}
+</script>
+
+<ul>
+	<li><a href="#" onclick="login()" class="login">Login</a></li>
+	<li><hr class="divider" noshade /></li>
+	<li><a href="#" onclick="cacheBust()" class="cache">Cache Bust</a></li>
+	<li><a href="#" onclick="debug()" class="debug">Debug</a></li>
+	<li><hr class="divider" noshade /></li>
+	<li><a href="#" onclick="jira()" class="jira">Jira</a></li>
+	<li><a href="#" onclick="community()" class="community">Community</a></li>
+</ul>

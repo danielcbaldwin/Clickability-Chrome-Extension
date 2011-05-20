@@ -1,0 +1,12 @@
+{
+  "name": "Clickability",
+  "version": "1.0",
+  "description": "Plugin to do tasks in Clickability.",
+  "browser_action": {
+    "default_icon": "images/extention-icon.png",
+	"popup": "popup.html"
+  },
+  "permissions": [
+	"tabs", "windows", "http://*/*", "https://*/*"
+  ]
+}
