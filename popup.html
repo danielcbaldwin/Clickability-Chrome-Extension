@@ -1,6 +1,6 @@
 <style>
 	ul {
-		width: 120px;
+		width: 150px;
 		padding: 0;
 		margin: 0;
 	}
@@ -8,7 +8,12 @@
 	ul li {
 		list-style: none;
 		padding: 0;
-		margin: 0;
+		margin: 2px 0 0;
+		overflow: hidden;
+		color: #000;
+		font-size: 11px;
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		line-height: 22px;
 	}
 	
 	ul li a {
@@ -29,10 +34,16 @@
 	
 	ul li a.debug {
 		background: url(images/bug.png) no-repeat 7px center;
+		float: left;
+		padding-right: 3px;
 	}
 	
 	ul li a.cache {
-		background: url(images/cache.png) no-repeat 7px center;
+		background: url(images/bomb.png) no-repeat 7px center;
+	}
+	
+	ul li a.help {
+		background: url(images/light.png) no-repeat 7px center;
 	}
 	
 	ul li a.login {
@@ -41,6 +52,22 @@
 	
 	ul li a.community {
 		background: url(images/group.png) no-repeat 7px center;
+	}
+	
+	ul li a.reference {
+		background: url(images/book.png) no-repeat 7px center;
+	}
+	
+	ul li a.development {
+		background: url(images/edit.png) no-repeat 7px center;
+	}
+	
+	ul li a.staging {
+		background: url(images/cog.png) no-repeat 7px center;
+	}
+	
+	ul li a.production {
+		background: url(images/world.png) no-repeat 7px center;
 	}
 	
 	ul li a:hover {
@@ -55,16 +82,62 @@
 		width: 100%;
 		text-align: left;
 	}
-</style>
-
+	
+	.dropdown-action{
+		background: url(images/arrow_down.png) no-repeat right center;
+		height: 16px;
+		width: 49px;
+		margin: 0;
+		padding: 3px 20px 3px 3px;
+		float: right;
+		border: 1px solid #ccc;
+	}
+	
+	#debug-dropdown {
+		display: none;
+		position: absolute;
+		top: 54px;
+		left: 84px;
+		background-color: #fff;
+		border: 1px solid #ccc;
+		width: 72px;
+		border-radius: 0 0 3px 3px;
+		-webkit-border-radius: 0 0 3px 3px;
+	}
+	
+	#debug-dropdown li {
+		margin: 0;
+	}
+	
+	#debug-dropdown li a {
+		padding: 3px 20px 3px 3px;
+		width: 49px;
+		border-radius: 0;
+		-webkit-border-radius: 0;
+	}
+	
+	#debug-dropdown li a:hover {
+		
+	}
+	
+	#debug-dropdown li a.current {
+		color: blue;
+	}
+	
+	</style>
+<script src="scripts/jquery-1.6.1.min.js"></script>
 <script>
 	function login() {
-		chrome.tabs.executeScript(null, { code: "window.location = 'https://cms.clickability.com/cms'" });
+		chrome.tabs.create({
+			url: 'https://cms.clickability.com/cms'	
+		});
 		window.close();
 	}
 	
 	function jira() {
-		chrome.tabs.executeScript(null, { code: "window.location = 'http://clickability.onjira.com'" });
+		chrome.tabs.create({
+			url: 'http://clickability.onjira.com'	
+		});
 		window.close();
 	}
 	
@@ -73,21 +146,84 @@
 	}
 	
 	function debug() {
+		chrome.tabs.executeScript(null, { code: "var debugTypeValue = '"+localStorage.debugTypeValue+"';" });
 		chrome.tabs.executeScript(null, { file: "scripts/debug.js" });
 	}
 	
+	function help() {
+		chrome.tabs.executeScript(null, { file: "scripts/help.js" });
+	}
+	
 	function community() {
-		chrome.tabs.executeScript(null, { code: "window.location = 'https://community.clickability.com'" });
+		chrome.tabs.create({
+			url: 'https://community.clickability.com'	
+		});
 		window.close();
 	}
+	
+	function reference() {
+		chrome.tabs.create({
+			url: 'http://media.clickability.com/documents/ClickabilityTemplateReferenceGuide051311.pdf'	
+		});
+		window.close();
+	}
+	
+	function development() {
+		chrome.tabs.executeScript(null, { file: "scripts/switch-to-development.js" });
+	}
+	
+	function staging() {
+		chrome.tabs.executeScript(null, { file: "scripts/switch-to-staging.js" });
+	}
+	
+	function production() {
+		chrome.tabs.executeScript(null, { file: "scripts/switch-to-production.js" });
+	}
+	
+	$(function() {
+		if(localStorage.debugTypeName == undefined || localStorage.debugTypeName == null) {
+			localStorage.debugTypeName = 'Basic';
+			localStorage.debugTypeValue = 'basic';
+		}
+		
+		$('.dropdown-action').attr('data-selected', localStorage.debugTypeValue).html(localStorage.debugTypeName);
+		
+		$('.dropdown-action').click(function() {
+			var _self = $(this);
+			
+			if($('#debug-dropdown:visible').length > 0) {
+				$('#debug-dropdown').hide(0);
+			} else {
+				$('#debug-dropdown').show(0);
+				$('#debug-dropdown li a').click(function() {
+					$(_self).html($(this).html());
+					$(_self).attr('data-selected', $(this).attr('data-value'));
+					localStorage.debugTypeName = $(this).html();
+					localStorage.debugTypeValue = $(this).attr('data-value');
+					debug();
+					$('#debug-dropdown').hide(0);
+				});
+			}
+		});
+	});
 </script>
-
+<ul id="debug-dropdown">
+	<li><a href="#" data-value="basic">Basic</a></li>
+	<li><a href="#" data-value="extended">Extended</a></li>
+	<li><a href="#" data-value="full">Full</a></li>
+</ul>
 <ul>
+	<li><a href="#" onclick="cacheBust()" class="cache">Cache Bust</a></li>
+	<li><a href="#" onclick="debug()" class="debug">Debug</a><a href="#" class="dropdown-action" data-selected=""></a></li>
+	<li><a href="#" onclick="help()" class="help">Help</a></li>
+	<li><hr class="divider" noshade /></li>
+	<li><a href="#" onclick="development()" class="development">Development</a></li>
+	<li><a href="#" onclick="staging()" class="staging">Staging</a></li>
+	<li><a href="#" onclick="production()" class="production">Production</a></li>
+	<li><hr class="divider" noshade /></li>
 	<li><a href="#" onclick="login()" class="login">Login</a></li>
 	<li><hr class="divider" noshade /></li>
-	<li><a href="#" onclick="cacheBust()" class="cache">Cache Bust</a></li>
-	<li><a href="#" onclick="debug()" class="debug">Debug</a></li>
-	<li><hr class="divider" noshade /></li>
-	<li><a href="#" onclick="jira()" class="jira">Jira</a></li>
+	<!-- li><a href="#" onclick="jira()" class="jira">Jira</a></li -->
 	<li><a href="#" onclick="community()" class="community">Community</a></li>
+	<li><a href="#" onclick="reference()" class="reference">Reference</a></li>
 </ul>

@@ -1,10 +1,15 @@
 {
   "name": "Clickability",
-  "version": "1.0",
-  "description": "Plugin to do tasks in Clickability.",
+  "version": "1.1",
+  "description": "Plugin that allows a user to work with and manage a website that has been built on the Clickability platform.",
   "browser_action": {
     "default_icon": "images/extention-icon.png",
 	"popup": "popup.html"
+  },
+  "icons": {
+	"16": "images/extention-icon.png",
+	"48": "images/logo48.png",
+	"128": "images/logo128.png"
   },
   "permissions": [
 	"tabs", "windows", "http://*/*", "https://*/*"
