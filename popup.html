@@ -125,7 +125,6 @@
 	}
 	
 	</style>
-<script src="scripts/jquery-1.6.1.min.js"></script>
 <script>
 	function login() {
 		chrome.tabs.create({
@@ -180,41 +179,52 @@
 		chrome.tabs.executeScript(null, { file: "scripts/switch-to-production.js" });
 	}
 	
-	$(function() {
+	function toggleDropdown() {
+		var elem = document.getElementById('debug-dropdown');
+		if(elem.style.display == "block") {
+			elem.style.display = "none";
+		} else {
+			elem.style.display = "block";
+		}
+	}
+	
+	function dropdownAction(elem) {
+		var select = document.getElementById('dropdown-action');
+		
+		var attrs = elem.attributes;
+		if('data-value' in attrs) {
+			select.setAttribute('data-selected', attrs['data-value'].value);
+			select.innerHTML = elem.innerHTML;
+			localStorage.debugTypeName = elem.innerHTML;
+			localStorage.debugTypeValue = attrs['data-value'].value;
+		}
+		
+		debug();
+		toggleDropdown();
+	}
+	
+	window.onload = function() {
 		if(localStorage.debugTypeName == undefined || localStorage.debugTypeName == null) {
 			localStorage.debugTypeName = 'Basic';
 			localStorage.debugTypeValue = 'basic';
 		}
 		
-		$('.dropdown-action').attr('data-selected', localStorage.debugTypeValue).html(localStorage.debugTypeName);
-		
-		$('.dropdown-action').click(function() {
-			var _self = $(this);
-			
-			if($('#debug-dropdown:visible').length > 0) {
-				$('#debug-dropdown').hide(0);
-			} else {
-				$('#debug-dropdown').show(0);
-				$('#debug-dropdown li a').click(function() {
-					$(_self).html($(this).html());
-					$(_self).attr('data-selected', $(this).attr('data-value'));
-					localStorage.debugTypeName = $(this).html();
-					localStorage.debugTypeValue = $(this).attr('data-value');
-					debug();
-					$('#debug-dropdown').hide(0);
-				});
-			}
-		});
-	});
+		var elem = document.getElementById('dropdown-action');
+		var attrs = elem.attributes;
+		if('data-selected' in attrs) {
+			elem.setAttribute('data-selected', localStorage.debugTypeValue);
+		}
+		elem.innerHTML = localStorage.debugTypeName
+	};
 </script>
-<ul id="debug-dropdown">
-	<li><a href="#" data-value="basic">Basic</a></li>
-	<li><a href="#" data-value="extended">Extended</a></li>
-	<li><a href="#" data-value="full">Full</a></li>
+<ul id="debug-dropdown" style="display: none;">
+	<li><a href="#" onclick="dropdownAction(this)" data-value="basic">Basic</a></li>
+	<li><a href="#" onclick="dropdownAction(this)" data-value="extended">Extended</a></li>
+	<li><a href="#" onclick="dropdownAction(this)" data-value="full">Full</a></li>
 </ul>
 <ul>
 	<li><a href="#" onclick="cacheBust()" class="cache">Cache Bust</a></li>
-	<li><a href="#" onclick="debug()" class="debug">Debug</a><a href="#" class="dropdown-action" data-selected=""></a></li>
+	<li><a href="#" onclick="debug()" class="debug">Debug</a><a href="#" onclick="toggleDropdown()" class="dropdown-action" id="dropdown-action" data-selected=""></a></li>
 	<li><a href="#" onclick="help()" class="help">Help</a></li>
 	<li><hr class="divider" noshade /></li>
 	<li><a href="#" onclick="development()" class="development">Development</a></li>
