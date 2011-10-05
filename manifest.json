@@ -1,6 +1,6 @@
 {
   "name": "Clickability",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Plugin that allows a user to work with and manage a website that has been built on the Clickability platform.",
   "browser_action": {
     "default_icon": "images/extention-icon.png",
